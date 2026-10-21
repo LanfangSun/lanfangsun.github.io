@@ -25,7 +25,6 @@
 ## 数据来源与需要你核对的地方
 - 影响因子按 2025 JIF（JCR 2026 年 6 月发布）填写，来自公开转载页面（wos-journal.info、BioxBio、MDPI 期刊页），建议用学校图书馆 JCR 再核对一次。
 - Innovation in Language Learning and Teaching、Computers and Composition 的 2025 JIF 没查到可靠数值，暂未显示，只显示 CV 中的 Q1。
-- Reflective Practice：2025 JIF 1.8，在 Education & Educational Research 类别中百分位约 61.8%，按 JCR 规则为 Q2（CV 中写的是 Q1，网站目前显示 Q2，请核对）。
 - DOI 10.1111/jcal.70244 由文章编号 e70244 按 Wiley 格式推断；其余 DOI 都核对过出版商或 HKU Scholars Hub。
 
 ## 发布到 GitHub Pages
