@@ -54,16 +54,21 @@
 <p class="note" style="margin-top:12px">Source: <a href="https://openalex.org" target="_blank" rel="noopener">OpenAlex</a>. Based only on DOI-linked records, so it does not match total Google Scholar citations. A citing work counts once for each country among its authors’ institutions; works without usable country information are left out.</p>
 </section>
 
-<h2>All publications</h2>
+<h2 id="presentations">Articles and presentations</h2>
+<div class="tabs list-tabs" id="list-tabs" role="group" aria-label="Show">
+<button type="button" data-mode="articles" aria-pressed="true">Journal articles <span class="n">19</span></button>
+<button type="button" data-mode="talks" aria-pressed="false">Conference presentations <span class="n">22</span></button>
+</div>
 <div class="pub-tools">
-<label for="publication-search" class="meta" style="flex-basis:100%;margin-bottom:-6px">Search by title, author, or journal</label>
+<label for="publication-search" class="meta" style="flex-basis:100%;margin-bottom:-6px">Search by title, author, journal, or conference</label>
 <input class="search" type="search" id="publication-search" placeholder="e.g. vlogs, writing, teachers">
 <div class="filters"><button type="button" id="indexed-only" aria-pressed="false">SSCI / ESCI only</button></div>
 </div>
 <div class="filters" id="year-filters" role="group" aria-label="Filter by year" style="margin:12px 0"></div>
-<p class="meta" id="result-count" role="status">19 publications</p>
+<p class="meta" id="result-count" role="status">19 journal articles</p>
 <div id="pub-list"></div>
-<p id="no-results" class="empty" hidden>No publications match. Try another keyword, or choose All years.</p>
+<div id="talk-list" hidden></div>
+<p id="no-results" class="empty" hidden>Nothing matches. Try another keyword, or choose All years.</p>
 <p class="note">* Corresponding author. Index, quartile, and impact factor follow Clarivate Journal Citation Reports (JCR 2025 Journal Impact Factor, released June 2026); the quartile shown is the journal’s best category. </p>
 </main>
 <footer><div class="wrap footer-inner"><span>© 2026 Lanfang Sun · Hong Kong, by way of Yantai</span><span><a href="mailto:lsun@eduhk.hk">lsun@eduhk.hk</a> · Updated October 2026</span></div></footer>

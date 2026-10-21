@@ -128,38 +128,83 @@
       list.appendChild(g);
     });
 
-    // year filter buttons
+    // presentations list
+    var tlist = $("#talk-list"), talks = S.talks || [];
+    var tyears = [];
+    talks.forEach(function (t) { if (tyears.indexOf(t.year) < 0) tyears.push(t.year); });
+    tyears.sort(function (a, b) { return b - a; });
+    if (tlist) tyears.forEach(function (y) {
+      var g = document.createElement("section");
+      g.className = "year-group";
+      g.innerHTML = '<h2 class="pub-year">' + y + "</h2>";
+      talks.filter(function (t) { return t.year === y; }).forEach(function (t) {
+        var a = document.createElement("article");
+        a.className = "publication talk";
+        a.dataset.year = y;
+        var tags = (t.type ? '<span class="tag idx">' + t.type + "</span>" : "") +
+                   (t.upcoming ? '<span class="tag if">Upcoming</span>' : "") +
+                   (t.award ? '<span class="tag q q1">' + t.award + "</span>" : "");
+        a.innerHTML = '<h3 class="pt">' + t.title + '</h3><p class="pa">' + t.authors + "</p>" +
+          '<p class="pj"><i>' + t.venue + "</i>, " + t.place + " · " + t.when + "</p>" +
+          (tags ? '<div class="tags">' + tags + "</div>" : "");
+        g.appendChild(a);
+      });
+      tlist.appendChild(g);
+    });
+
+    // tabs, year filter, search
+    var mode = "articles";
+    var modeTabs = $("#list-tabs");
     var fbox = $("#year-filters");
     var yearSel = "all", idxOnly = false;
-    if (fbox) {
-      var mk = function (label, val) {
-        var b = document.createElement("button");
-        b.type = "button"; b.textContent = label; b.dataset.filter = val;
-        b.setAttribute("aria-pressed", String(val === "all"));
-        fbox.appendChild(b);
-      };
-      mk("All years", "all");
-      years.forEach(function (y) { mk(String(y), String(y)); });
-    }
     var idxBtn = $("#indexed-only");
     var search = $("#publication-search");
     var count = $("#result-count"), none = $("#no-results");
+    function buildYears() {
+      if (!fbox) return;
+      fbox.innerHTML = "";
+      var mk = function (label, val) {
+        var b = document.createElement("button");
+        b.type = "button"; b.textContent = label; b.dataset.filter = val;
+        b.setAttribute("aria-pressed", String(val === yearSel));
+        fbox.appendChild(b);
+      };
+      mk("All years", "all");
+      (mode === "articles" ? years : tyears).forEach(function (y) { mk(String(y), String(y)); });
+    }
+    buildYears();
 
     function applyFilter() {
       var q = (search && search.value || "").toLowerCase().trim(), n = 0, visible = {};
-      $$(".publication", list).forEach(function (e) {
+      var active = mode === "articles" ? list : tlist;
+      list.hidden = mode !== "articles";
+      if (tlist) tlist.hidden = mode === "articles";
+      if (idxBtn) idxBtn.hidden = mode !== "articles";
+      $$(".publication", active).forEach(function (e) {
         var ok = (yearSel === "all" || e.dataset.year === yearSel) &&
-                 (!idxOnly || e.dataset.indexed === "1") &&
+                 (mode !== "articles" || !idxOnly || e.dataset.indexed === "1") &&
                  e.textContent.toLowerCase().indexOf(q) > -1;
         e.hidden = !ok;
-        if (ok) { n++; visible[e.dataset.id] = 1; }
+        if (ok) { n++; if (e.dataset.id) visible[e.dataset.id] = 1; }
       });
-      $$(".year-group", list).forEach(function (g) {
+      $$(".year-group", active).forEach(function (g) {
         g.hidden = !$$(".publication", g).some(function (e) { return !e.hidden; });
       });
-      if (count) count.textContent = n + (n === 1 ? " publication" : " publications");
+      var noun = mode === "articles" ? ["journal article", "journal articles"] : ["presentation", "presentations"];
+      if (count) count.textContent = n + " " + noun[n === 1 ? 0 : 1];
       if (none) none.hidden = n !== 0;
-      $$(".buoy").forEach(function (b) { b.classList.toggle("dim", !visible[b.dataset.id]); });
+      if (mode === "articles") $$(".buoy").forEach(function (b) { b.classList.toggle("dim", !visible[b.dataset.id]); });
+    }
+    if (modeTabs) {
+      $$("[data-mode]", modeTabs).forEach(function (b) {
+        var c = b.querySelector(".n"); if (c) c.textContent = b.dataset.mode === "articles" ? S.pubs.length : talks.length;
+      });
+      modeTabs.addEventListener("click", function (e) {
+        var b = e.target.closest("[data-mode]"); if (!b) return;
+        mode = b.dataset.mode; yearSel = "all";
+        $$("[data-mode]", modeTabs).forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+        buildYears(); applyFilter();
+      });
     }
     if (fbox) fbox.addEventListener("click", function (e) {
       var b = e.target.closest("button"); if (!b) return;
@@ -171,6 +216,7 @@
       idxOnly = !idxOnly; idxBtn.setAttribute("aria-pressed", String(idxOnly)); applyFilter();
     });
     if (search) search.addEventListener("input", applyFilter);
+    if (location.hash === "#presentations" && modeTabs) { var tb = modeTabs.querySelector('[data-mode="talks"]'); if (tb) tb.click(); }
 
     // at a glance
     var gl = $("#glance");
