@@ -106,10 +106,6 @@ window.SITE = {
       authors: "Lin, Y., &amp; <b>Sun, L.</b>",
       title: "Study on instructional approach of online Chinese for specific purposes in higher education",
       details: "8, 14–70" },
-    { id: "aetp", year: 2021, j: "AETP", pos: [-0.82, 0.18], role: "first",
-      authors: "<b>Sun, L.</b>, Meng, H., &amp; Wang, H.",
-      title: "Optimization of college English classroom teaching process from the perspective of educational psychology based on multi-feature blended learning",
-      details: "" },
     { id: "iptm", year: 2021, j: "IPTM", pos: [-0.32, 0.26], role: "first",
       authors: "<b>Sun, L.</b>",
       title: "Research on the problems and countermeasures of three teachings in online academic Chinese writing course for international students in China",
@@ -269,6 +265,6 @@ window.SITE = {
     { id: "manila", name: "Manila", zh: "马尼拉", region: "Philippines", continent: "Asia", lat: 14.6, lon: 120.98 },
     { id: "cebu", name: "Cebu", zh: "宿务", region: "Philippines", continent: "Asia", lat: 10.32, lon: 123.89 },
     { id: "kualalumpur", name: "Kuala Lumpur", zh: "吉隆坡", region: "Malaysia", continent: "Asia", lat: 3.14, lon: 101.69 },
-    { id: "brunei", name: "Brunei", zh: "文莱", region: "Brunei", continent: "Asia", lat: 4.9, lon: 114.94 }
+    { id: "brunei", name: "Bandar Seri Begawan", zh: "斯里巴加湾市", region: "Brunei", continent: "Asia", lat: 4.9, lon: 114.94 }
   ]
 };

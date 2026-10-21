@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>论文 | 孙澜方</title>
+<meta name="description" content="孙澜方的期刊论文与会议报告，附 DOI 与 JCR 分区。">
+<meta name="theme-color" content="#1d5c78">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox='0 0 32 32' aria-hidden='true'><path d='M13 10h6l2 18H11z' fill='%23fff' stroke='%230e2f44' stroke-width='1.6' stroke-linejoin='round'/><path d='M12.3 16.5h7.4M11.7 22h8.6' stroke='%231d5c78' stroke-width='2.2'/><rect x='13' y='5.5' width='6' height='4.5' fill='%23e7b03c' stroke='%230e2f44' stroke-width='1.4'/><path d='M12 5.5 16 2l4 3.5z' fill='%230e2f44'/><path d='M4 30c3-1.6 5-1.6 8 0s5 1.6 8 0 5-1.6 8 0' fill='none' stroke='%235a9ea6' stroke-width='1.6'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Work+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<script>try{var t=localStorage.getItem("ls-theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<script defer src="https://cdn.jsdelivr.net/npm/d3@7.8.5/dist/d3.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+<script defer src="assets/geo.js"></script>
+<script defer src="assets/data.js"></script>
+<script defer src="assets/main.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">跳到正文</a>
+<header><div class="wrap header-inner">
+<a class="brand" href="index-zh.html"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M13 10h6l2 18H11z" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.6" stroke-linejoin="round"/><path d="M12.3 16.5h7.4M11.7 22h8.6" stroke="var(--deep)" stroke-width="2.2"/><rect x="13" y="5.5" width="6" height="4.5" fill="var(--beam)" stroke="var(--ink)" stroke-width="1.4"/><path d="M12 5.5 16 2l4 3.5z" fill="var(--ink)"/><path d="M4 30c3-1.6 5-1.6 8 0s5 1.6 8 0 5-1.6 8 0" fill="none" stroke="var(--glass)" stroke-width="1.6"/></svg><span>孙澜方</span></a>
+<button class="menu" type="button" aria-expanded="false" aria-controls="navigation">菜单</button>
+<nav id="navigation" aria-label="Main navigation"><a href="index-zh.html">首页</a><a href="publications-zh.html" aria-current="page">论文</a><a href="projects-zh.html">项目</a><a href="teaching-zh.html">教学</a><a href="service-zh.html">服务</a><a class="lang-switch" href="publications.html" lang="en" hreflang="en">English</a><button class="theme-toggle" type="button" aria-label="Switch colours"></button></nav>
+</div></header>
+<main id="main" class="wrap">
+<div class="page-top">
+<h1>论文</h1>
+<p class="lead">18 篇期刊论文，画成一张海图：海岸代表正式情境，外海代表非正式情境；北方是教师，南方是学习者。每个浮标是一篇论文，暖色洋流标示生成式人工智能。</p>
+</div>
+<div class="chart-wrap">
+<div class="seachart"><div id="seachart"></div>
+<div class="sc-legend"><span><i class="lg big q1"></i>第一作者</span><span><i class="lg sm q1"></i>合作作者</span><span><i class="lg sm q1"></i>JCR Q1</span><span><i class="lg sm q2"></i>JCR Q2</span><span><i class="lg sm q0"></i>未收录于 JCR</span><span><i class="lg sm q0 lg-halo"></i>生成式人工智能</span><span>2018 年的两篇短文只列在下方，未画入海图</span></div>
+</div>
+<aside class="buoy-card" id="buoy-card" aria-live="polite"><p class="empty-state">将鼠标移到浮标上（或用 Tab 键选中）查看论文信息，按回车打开原文。</p></aside>
+</div>
+
+<h2 style="margin-top:56px">一览</h2>
+<p class="meta" style="margin-bottom:10px">按年份与作者身份排列的期刊。深蓝为 JCR Q1，海玻璃色为 Q2；点击可打开论文。</p>
+<div class="glance" id="glance"></div>
+
+<section class="travels" aria-labelledby="travel-h">
+<h2 id="travel-h">我的研究去了哪里</h2>
+<p class="meta" style="max-width:70ch">引用我有 DOI 论文的作者所在的国家和地区，数据来自 OpenAlex，每天自动更新。</p>
+<div class="cite-stats">
+<p><b id="cs-sources">–</b><span>篇有 DOI 的论文</span></p>
+<p><b id="cs-citing">–</b><span>篇施引文献</span></p>
+<p><b id="cs-countries">–</b><span>个国家和地区</span></p>
+</div>
+<div class="cite-wrap">
+<div class="cite-map" id="cite-map"><p class="empty" style="text-align:center;padding:80px 0">正在从 OpenAlex 加载引用数据…</p></div>
+<ol class="cite-list" id="cite-list" aria-label="按国家和地区统计的施引文献"></ol>
+</div>
+<p class="note" style="margin-top:12px">数据来源：<a href="https://openalex.org" target="_blank" rel="noopener">OpenAlex</a>。仅统计有 DOI 关联的记录，因此与 Google Scholar 的总引用数不同。一篇施引文献的作者机构涉及几个国家，就在每个国家各计一次；缺少国家信息的文献不计入。</p>
+</section>
+
+<h2 id="presentations">论文与会议报告</h2>
+<div class="tabs list-tabs" id="list-tabs" role="group" aria-label="显示">
+<button type="button" data-mode="articles" aria-pressed="true">期刊论文 <span class="n">18</span></button>
+<button type="button" data-mode="talks" aria-pressed="false">会议报告 <span class="n">22</span></button>
+</div>
+<div class="pub-tools">
+<label for="publication-search" class="meta" style="flex-basis:100%;margin-bottom:-6px">按题目、作者、期刊或会议搜索</label>
+<input class="search" type="search" id="publication-search" placeholder="例如 vlog、writing、teachers">
+<div class="filters"><button type="button" id="indexed-only" aria-pressed="false">只看 SSCI / ESCI</button></div>
+</div>
+<div class="filters" id="year-filters" role="group" aria-label="按年份筛选" style="margin:12px 0"></div>
+<p class="meta" id="result-count" role="status">共 18 篇期刊论文</p>
+<div id="pub-list"></div>
+<div id="talk-list" hidden></div>
+<p id="no-results" class="empty" hidden>没有匹配的结果，请换个关键词，或选择“全部年份”。</p>
+<p class="note">* 通讯作者。收录、分区与影响因子依据科睿唯安 Journal Citation Reports（2026 年 6 月发布的 JCR 2025 影响因子）；分区取期刊所在类别中的最佳分区。 </p>
+</main>
+<footer><div class="wrap footer-inner"><span>© 2026 孙澜方 · 从烟台出发，现居香港</span><span><a href="mailto:lsun@eduhk.hk">lsun@eduhk.hk</a> · 更新于 2026 年 10 月</span></div></footer>
+</body>
+</html>

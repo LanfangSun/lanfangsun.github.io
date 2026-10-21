@@ -9,6 +9,7 @@
   var ZH_NAMES = { "Asia": "亚洲", "North America": "北美洲", "Mainland China": "中国内地", "Macau": "澳门", "Taiwan": "台湾",
     "Japan": "日本", "South Korea": "韩国", "Thailand": "泰国", "Philippines": "菲律宾", "Malaysia": "马来西亚", "Brunei": "文莱", "United States": "美国" };
   var tr = function (t) { return ZH ? (ZH_NAMES[t] || t) : t; };
+  var L = function (en, zh) { return ZH ? zh : en; };
   function el(tag, attrs, parent) {
     var n = document.createElementNS(NS, tag);
     for (var k in attrs) n.setAttribute(k, attrs[k]);
@@ -73,17 +74,17 @@
     if (j.q) h += '<span class="tag q ' + qClass(p) + '">' + S.jcrLabel + " " + j.q + "</span>";
     if (j.jif) h += '<span class="tag if">IF ' + j.jif.toFixed(1) + "</span>";
     if (p.doi) h += '<a class="tag doi" href="https://doi.org/' + p.doi + '" target="_blank" rel="noopener">DOI ' + p.doi + "</a>";
-    else if (p.url) h += '<a class="tag doi" href="' + p.url + '" target="_blank" rel="noopener">Full text</a>';
+    else if (p.url) h += '<a class="tag doi" href="' + p.url + '" target="_blank" rel="noopener">' + L("Full text", "全文") + '</a>';
     return h;
   }
 
   /* ---------- home: profile links ---------- */
-  var pl = $("#profile-links"), L = S.links || {};
+  var pl = $("#profile-links"), LK = S.links || {};
   if (pl) {
     var items = [
-      [L.orcid, "ORCID"],
-      [L.scholar, "Google Scholar"],
-      [L.linkedin, "LinkedIn"]
+      [LK.orcid, "ORCID"],
+      [LK.scholar, "Google Scholar"],
+      [LK.linkedin, "LinkedIn"]
     ].filter(function (x) { return x[0]; });
     pl.innerHTML = items.map(function (x) {
       return '<a href="' + x[0] + '"' + (x[0].indexOf("mailto:") === 0 ? "" : ' target="_blank" rel="noopener me"') + ">" + x[1] + "</a>";
@@ -141,8 +142,9 @@
         var a = document.createElement("article");
         a.className = "publication talk";
         a.dataset.year = y;
-        var tags = (t.type ? '<span class="tag idx">' + t.type + "</span>" : "") +
-                   (t.upcoming ? '<span class="tag if">Upcoming</span>' : "") +
+        var TT = { Paper: "论文报告", Roundtable: "圆桌讨论", Poster: "海报" };
+        var tags = (t.type ? '<span class="tag idx">' + L(t.type, TT[t.type] || t.type) + "</span>" : "") +
+                   (t.upcoming ? '<span class="tag if">' + L("Upcoming", "即将举行") + "</span>" : "") +
                    (t.award ? '<span class="tag q q1">' + t.award + "</span>" : "");
         a.innerHTML = '<h3 class="pt">' + t.title + '</h3><p class="pa">' + t.authors + "</p>" +
           '<p class="pj"><i>' + t.venue + "</i>, " + t.place + " · " + t.when + "</p>" +
@@ -169,7 +171,7 @@
         b.setAttribute("aria-pressed", String(val === yearSel));
         fbox.appendChild(b);
       };
-      mk("All years", "all");
+      mk(L("All years", "全部年份"), "all");
       (mode === "articles" ? years : tyears).forEach(function (y) { mk(String(y), String(y)); });
     }
     buildYears();
@@ -191,7 +193,7 @@
         g.hidden = !$$(".publication", g).some(function (e) { return !e.hidden; });
       });
       var noun = mode === "articles" ? ["journal article", "journal articles"] : ["presentation", "presentations"];
-      if (count) count.textContent = n + " " + noun[n === 1 ? 0 : 1];
+      if (count) count.textContent = ZH ? "共 " + n + (mode === "articles" ? " 篇期刊论文" : " 场会议报告") : n + " " + noun[n === 1 ? 0 : 1];
       if (none) none.hidden = n !== 0;
       if (mode === "articles") $$(".buoy").forEach(function (b) { b.classList.toggle("dim", !visible[b.dataset.id]); });
     }
@@ -225,7 +227,7 @@
       var t = "<table><thead><tr><th scope=\"col\"><span class=\"sr\"></span></th>";
       asc.forEach(function (y) { t += '<th scope="col">' + y + "</th>"; });
       t += "</tr></thead><tbody>";
-      [["first", "First author"], ["co", "Co-author"]].forEach(function (r) {
+      [["first", L("First author", "第一作者")], ["co", L("Co-author", "合作作者")]].forEach(function (r) {
         t += '<tr><th scope="row">' + r[1] + "</th>";
         asc.forEach(function (y) {
           t += "<td>";
@@ -264,11 +266,11 @@
   }
 
   function placeOf(p) {
-    if (!p.pos) return "Early essays";
+    if (!p.pos) return L("Early essays", "早期短文");
     var x = p.pos[0], y = p.pos[1];
-    var who = y > 0.12 ? "Teachers" : y < -0.12 ? "Learners" : "Teachers & learners";
-    var where = x < -0.12 ? "formal settings" : x > 0.12 ? "informal settings" : "formal & informal settings";
-    return who + " · " + where + (p.ai ? " · generative AI" : "");
+    var who = y > 0.12 ? L("Teachers", "教师") : y < -0.12 ? L("Learners", "学习者") : L("Teachers & learners", "教师与学习者");
+    var where = x < -0.12 ? L("formal settings", "正式情境") : x > 0.12 ? L("informal settings", "非正式情境") : L("formal & informal settings", "正式与非正式情境");
+    return who + " · " + where + (p.ai ? L(" · generative AI", " · 生成式人工智能") : "");
   }
   function smooth(pts) {
     var d = "M" + pts[0][0].toFixed(1) + "," + pts[0][1].toFixed(1);
@@ -321,13 +323,13 @@
     el("path", { d: "M0,-38 L6,0 L0,38 L-6,0Z M-38,0 L0,5 L38,0 L0,-5Z", class: "sc-compass" }, cg);
     el("path", { d: "M0,-38 L6,0 L-6,0Z", class: "sc-compass-n" }, cg);
     function lbl(x, y, txt, cls, anchor) { var n = el("text", { x: x, y: y, class: cls, "text-anchor": anchor || "middle" }, bg); n.textContent = txt; return n; }
-    lbl(CX, 28, "Teachers", "sc-pole");
-    lbl(CX, 634, "Learners", "sc-pole");
-    lbl(132, CY - 10, "Formal", "sc-pole", "start");
-    lbl(962, CY - 10, "Informal", "sc-pole", "end");
-    lbl(132, CY + 18, "the coast: classrooms, courses", "sc-sub", "start");
-    lbl(962, CY + 18, "open sea: media, everyday life", "sc-sub", "end");
-    var Q = S.quadrants;
+    lbl(CX, 28, L("Teachers", "教师"), "sc-pole");
+    lbl(CX, 634, L("Learners", "学习者"), "sc-pole");
+    lbl(132, CY - 10, L("Formal", "正式"), "sc-pole", "start");
+    lbl(962, CY - 10, L("Informal", "非正式"), "sc-pole", "end");
+    lbl(132, CY + 18, L("the coast: classrooms, courses", "海岸：课堂与课程"), "sc-sub", "start");
+    lbl(962, CY + 18, L("open sea: media, everyday life", "外海：媒体与日常生活"), "sc-sub", "end");
+    var Q = ZH ? { nw: "教师教育", ne: "课堂之外的教师", sw: "课堂语言学习", se: "课堂之外的学习" } : S.quadrants;
     lbl(132, 60, Q.nw, "sc-quad", "start"); lbl(962, 60, Q.ne, "sc-quad", "end");
     lbl(132, 600, Q.sw, "sc-quad", "start"); lbl(962, 600, Q.se, "sc-quad", "end");
 
@@ -339,7 +341,7 @@
       el("path", { d: cd, id: "aiCurrent", class: "sc-current-line" }, bg);
       var tx = el("text", { class: "sc-current-label", dy: -16 }, bg);
       var tp = el("textPath", { href: "#aiCurrent", startOffset: "4%" }, tx);
-      tp.textContent = "generative AI current →";
+      tp.textContent = L("generative AI current →", "生成式人工智能洋流 →");
     }
 
     var buoyLayer = el("g", {}, svg);
@@ -360,10 +362,10 @@
       if (!p || !card) return;
       $$(".buoy").forEach(function (b) { b.classList.toggle("active", b.dataset.id === id); });
       card.innerHTML =
-        '<p class="sea-label" style="margin:0 0 6px">' + placeOf(p) + "<br>" + p.year + (p.role === "first" ? " · first author" : "") + "</p>" +
+        '<p class="sea-label" style="margin:0 0 6px">' + placeOf(p) + "<br>" + p.year + (p.role === "first" ? L(" · first author", " · 第一作者") : "") + "</p>" +
         entryHTML(p, false) +
         '<div class="tags">' + tagsHTML(p) + "</div>" +
-        '<p style="margin:14px 0 0;font-size:.9rem"><a href="#pub-' + p.id + '" data-jump="' + p.id + '">Show in the list</a></p>';
+        '<p style="margin:14px 0 0;font-size:.9rem"><a href="#pub-' + p.id + '" data-jump="' + p.id + '">' + L("Show in the list", "在列表中查看") + "</a></p>";
       if (pin) card.dataset.pinned = id;
     }
     host.addEventListener("mouseover", function (e) { var b = e.target.closest(".buoy"); if (b) show(b.dataset.id); });
@@ -417,10 +419,12 @@
       setText("#cs-countries", d.groups.length);
       var listEl = $("#cite-list"), max = d.groups.length ? d.groups[0].n : 1;
       listEl.innerHTML = d.groups.slice(0, 12).map(function (g) {
-        return '<li><span class="cl-name">' + g.name + '</span><span class="cl-bar"><i style="width:' + (100 * g.n / max).toFixed(1) + '%"></i></span><span class="cl-n">' + g.n + "</span></li>";
-      }).join("") + (d.groups.length > 12 ? '<li class="cl-more">+ ' + (d.groups.length - 12) + " more</li>" : "");
+        var nm = g.name;
+        if (ZH) { try { nm = new Intl.DisplayNames(["zh-CN"], { type: "region" }).of(g.code) || g.name; } catch (e) {} }
+        return '<li><span class="cl-name">' + nm + '</span><span class="cl-bar"><i style="width:' + (100 * g.n / max).toFixed(1) + '%"></i></span><span class="cl-n">' + g.n + "</span></li>";
+      }).join("") + (d.groups.length > 12 ? '<li class="cl-more">' + L("+ " + (d.groups.length - 12) + " more", "另有 " + (d.groups.length - 12) + " 个") + "</li>" : "");
       var d3 = window.d3, topo = window.topojson, G = window.GEO;
-      if (!d3 || !topo || !G) { cmap.innerHTML = '<p class="empty">The map could not load; the list shows every country.</p>'; return; }
+      if (!d3 || !topo || !G) { cmap.innerHTML = '<p class="empty">' + L("The map could not load; the list shows every country.", "地图未能加载，右侧列表仍显示全部国家和地区。") + "</p>"; return; }
       d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-110m.json").then(function (world) {
         var W = 960, H = 470, by = {};
         d.groups.forEach(function (g) { by[g.code] = g; });
@@ -443,12 +447,12 @@
         gg.append("circle").attr("r", function (g) { return Math.max(3.5, rs(g.n)); });
         gg.filter(function (g) { return rs(g.n) >= 10; }).append("text").attr("dy", "0.35em").text(function (g) { return g.n; });
         gg.append("title").text(function (g) { return g.name + ": " + g.n + (g.n === 1 ? " citing work" : " citing works"); });
-      }).catch(function () { cmap.innerHTML = '<p class="empty">The map could not load; the list shows every country.</p>'; });
+      }).catch(function () { cmap.innerHTML = '<p class="empty">' + L("The map could not load; the list shows every country.", "地图未能加载，右侧列表仍显示全部国家和地区。") + "</p>"; });
     };
 
     var startCites = function () {
       loadData().then(drawCites).catch(function () {
-        cmap.innerHTML = '<p class="empty">Citation data from OpenAlex is unavailable right now. Try again later.</p>';
+        cmap.innerHTML = '<p class="empty">' + L("Citation data from OpenAlex is unavailable right now. Try again later.", "暂时无法获取 OpenAlex 引用数据，请稍后再试。") + "</p>";
       });
     };
     if (document.readyState === "complete") startCites(); else window.addEventListener("load", startCites);
@@ -586,7 +590,7 @@
       }).catch(fail);
     }
     function fail() {
-      gbox.innerHTML = '<p class="empty" style="padding:40px 20px;text-align:center">The globe could not load (it needs an internet connection). Every stop is still listed alongside.</p>';
+      gbox.innerHTML = '<p class="empty" style="padding:40px 20px;text-align:center">' + L("The globe could not load (it needs an internet connection). Every stop is still listed alongside.", "地球未能加载（需要联网），旁边的列表仍显示全部地点。") + "</p>";
     }
     if (document.readyState === "complete") startGlobe(); else window.addEventListener("load", startGlobe);
   }

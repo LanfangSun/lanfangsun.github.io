@@ -3,7 +3,7 @@
 可直接用于 GitHub Pages 的静态网站，无需安装或构建。
 
 ## 页面
-- index.html：英文首页；index-zh.html：中文首页（右上角“中文 / English”切换）
+- 每个页面都有中英文两版：index / publications / projects / teaching / service（英文），对应 *-zh.html（中文）；右上角“中文 / English”切换到同一页的另一语言
 - 首页（灯塔海岸线、简介、四个研究方向、"From Yantai, outward" 旅行地球〔45 个去过的地方，按国家/地区分组〕、代表作）
 - projects.html / teaching.html / service.html：研究项目、教学、学术服务
 - publications.html：
@@ -44,7 +44,7 @@
 
 ## 发布到 GitHub Pages
 1. 登录 GitHub，新建公开仓库，名字必须是 `你的用户名.github.io`（例如 LanfangSun → lanfangsun.github.io）。
-2. 在仓库页面点 Add file → Upload files，把解压后的全部内容拖进去：6 个 HTML、README.md、assets 文件夹（含 avatar.jpg、data.js、geo.js、main.js、style.css）。不要上传 zip 本身，也不要多套一层文件夹。
+2. 在仓库页面点 Add file → Upload files，把解压后的全部内容拖进去：10 个 HTML、README.md、assets 文件夹（含 avatar.jpg、data.js、geo.js、main.js、style.css）。不要上传 zip 本身，也不要多套一层文件夹。
 3. 点 Commit changes。
 4. Settings → Pages → Source 选 Deploy from a branch → Branch 选 main、文件夹 / (root) → Save。
 5. 几分钟后打开 https://你的用户名.github.io/ 即可。
