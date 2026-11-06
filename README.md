@@ -24,7 +24,7 @@
 - jcrLabel：分区标签显示的年份（目前 "JCR 2025"）
 
 ## 数据来源与需要你核对的地方
-- 影响因子按 2025 JIF（JCR 2026 年 6 月发布）填写，来自公开转载页面（wos-journal.info、BioxBio、MDPI 期刊页），建议用学校图书馆 JCR 再核对一次。
+- 分区与影响因子按 JCR 2026 年版（2026 年 6 月发布，即 2025 年度 JIF）填写，来自公开转载页面（wos-journal.info、BioxBio、MDPI 期刊页），建议用学校图书馆 JCR 再核对一次。
 - Innovation in Language Learning and Teaching、Computers and Composition 的 2025 JIF 没查到可靠数值，暂未显示，只显示 CV 中的 Q1。
 - Reflective Practice：2025 JIF 1.8，在 Education & Educational Research 类别中百分位约 61.8%，按 JCR 规则为 Q2（CV 中写的是 Q1，网站目前显示 Q2，请核对）。
 - DOI 10.1111/jcal.70244 由文章编号 e70244 按 Wiley 格式推断；其余 DOI 都核对过出版商或 HKU Scholars Hub。
@@ -54,3 +54,8 @@
 - 不需要任何操作：地图是访客打开网页时由浏览器实时向 OpenAlex 查询的，OpenAlex 收录新引用后会自动出现（每位访客的浏览器缓存 24 小时）。
 - 发表新论文时，只要在 assets/data.js 的 pubs 里加上这篇论文并填写 doi，它的被引用情况就会自动计入地图。
 - OpenAlex 收录新引用通常比 Google Scholar 慢几天到几周，这是正常的。
+
+## 让 Google 搜到
+- sitemap.xml（站点地图）和 robots.txt 已放在根目录；每页都有 canonical、中英文 hreflang、Open Graph 和首页的 Person 结构化数据。
+- Google Search Console 验证文件 google9267647d80ab0074.html 要一直留在仓库根目录，不要删。
+- 每年 JCR 新版发布后（通常 6 月），改 assets/data.js 里的 jcrLabel 和各期刊的 q / jif。
