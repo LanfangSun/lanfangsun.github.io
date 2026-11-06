@@ -5,6 +5,7 @@
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
   var NS = "http://www.w3.org/2000/svg";
+  var REDUCE = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
   var ZH = (document.documentElement.lang || "").indexOf("zh") === 0;
   var ZH_NAMES = { "Asia": "亚洲", "North America": "北美洲", "Mainland China": "中国内地", "Macau": "澳门", "Taiwan": "台湾",
     "Japan": "日本", "South Korea": "韩国", "Thailand": "泰国", "Philippines": "菲律宾", "Malaysia": "马来西亚", "Brunei": "文莱", "United States": "美国" };
@@ -330,15 +331,16 @@
     lbl(132, CY + 18, L("the coast: classrooms, courses", "海岸：课堂与课程"), "sc-sub", "start");
     lbl(962, CY + 18, L("open sea: media, everyday life", "外海：媒体与日常生活"), "sc-sub", "end");
     var Q = ZH ? { nw: "教师教育", ne: "课堂之外的教师", sw: "课堂语言学习", se: "课堂之外的学习" } : S.quadrants;
-    lbl(132, 60, Q.nw, "sc-quad", "start"); lbl(962, 60, Q.ne, "sc-quad", "end");
-    lbl(132, 600, Q.sw, "sc-quad", "start"); lbl(962, 600, Q.se, "sc-quad", "end");
+    var quadEls = [lbl(132, 60, Q.nw, "sc-quad", "start"), lbl(962, 60, Q.ne, "sc-quad", "end"),
+                   lbl(132, 600, Q.sw, "sc-quad", "start"), lbl(962, 600, Q.se, "sc-quad", "end")];
+    ["nw", "ne", "sw", "se"].forEach(function (q, i) { quadEls[i].setAttribute("data-quad", q); });
 
     // the generative-AI current
     if (S.current) {
       var cpts = S.current.map(function (v) { return [X(v[0]), Y(v[1])]; });
       var cd = smooth(cpts);
-      el("path", { d: cd, class: "sc-current-band" }, bg);
-      el("path", { d: cd, id: "aiCurrent", class: "sc-current-line" }, bg);
+      var band = el("path", { d: cd, class: "sc-current-band" }, bg);
+      var curLine = el("path", { d: cd, id: "aiCurrent", class: "sc-current-line" }, bg);
       var tx = el("text", { class: "sc-current-label", dy: -16 }, bg);
       var tp = el("textPath", { href: "#aiCurrent", startOffset: "4%" }, tx);
       tp.textContent = L("generative AI current →", "生成式人工智能洋流 →");
@@ -349,6 +351,8 @@
       if (!p.pos) return;
       var bx = X(p.pos[0]), by = Y(p.pos[1]), big = p.role === "first", rr = big ? 11 : 7.5;
       var b = el("g", { class: "buoy " + qClass(p), tabindex: "0", role: "button", "data-id": p.id,
+        "data-role": p.role, "data-q": qClass(p), "data-ai": p.ai ? "1" : "0",
+        "data-quad": (p.pos[1] >= 0 ? "n" : "s") + (p.pos[0] < 0 ? "w" : "e"), "data-x": bx, "data-y": by, "data-r": rr,
         "aria-label": p.title + ". " + journalName(p) + ", " + p.year + ". " + placeOf(p) + (big ? ". First-authored." : ".") }, buoyLayer);
       el("circle", { cx: bx, cy: by, r: rr + 7, class: "ring" }, b);
       if (p.ai) el("circle", { cx: bx, cy: by, r: rr + 4, class: "halo" }, b);
@@ -356,6 +360,86 @@
       el("circle", { cx: bx, cy: by, r: rr, class: "body" }, b);
       var tt = el("title", {}, b); tt.textContent = p.title + " (" + p.year + ")";
     });
+
+    /* --- interactivity: drifting current, hover label, highlight by legend / quadrant / current --- */
+    var buoys = $$(".buoy", svg);
+    function hl(test) {
+      buoys.forEach(function (b) { b.classList.toggle("fade", !!test && !test(b)); });
+      svg.classList.toggle("hl-on", !!test);
+    }
+    // floating label above a buoy
+    var tip = el("g", { class: "sc-tip", "aria-hidden": "true" }, svg);
+    var tipBg = el("rect", { rx: 6, ry: 6, height: 24 }, tip), tipTx = el("text", { y: 16 }, tip);
+    function showTip(b) {
+      if (!b) { tip.classList.remove("on"); return; }
+      var p = S.pubs.filter(function (x) { return x.id === b.dataset.id; })[0];
+      tipTx.textContent = p.j + " · " + p.year;
+      var w = tipTx.getComputedTextLength() + 18, x = +b.dataset.x, y = +b.dataset.y - +b.dataset.r - 40;
+      x = Math.max(8, Math.min(W - w - 8, x - w / 2));
+      tipBg.setAttribute("width", w); tipTx.setAttribute("x", 9);
+      tip.setAttribute("transform", "translate(" + x + "," + Math.max(6, y) + ")");
+      tip.classList.add("on");
+    }
+    svg.addEventListener("mouseover", function (e) { showTip(e.target.closest(".buoy")); });
+    svg.addEventListener("focusin", function (e) { showTip(e.target.closest(".buoy")); });
+    svg.addEventListener("mouseleave", function () { showTip(null); });
+    // quadrant labels highlight their papers
+    quadEls.forEach(function (q) {
+      q.addEventListener("mouseenter", function () { hl(function (b) { return b.dataset.quad === q.dataset.quad; }); });
+      q.addEventListener("mouseleave", function () { hl(legendTest); });
+    });
+    // the current highlights generative-AI papers
+    if (band) {
+      band.addEventListener("mouseenter", function () { svg.classList.add("current-hot"); hl(function (b) { return b.dataset.ai === "1"; }); });
+      band.addEventListener("mouseleave", function () { svg.classList.remove("current-hot"); hl(legendTest); });
+    }
+    // legend items become toggles
+    var legendTest = null, legendKeys = ["first", "co", "q1", "q2", "q0", "ai"];
+    var tests = {
+      first: function (b) { return b.dataset.role === "first"; }, co: function (b) { return b.dataset.role !== "first"; },
+      q1: function (b) { return b.dataset.q === "q1"; }, q2: function (b) { return b.dataset.q === "q2"; },
+      q0: function (b) { return b.dataset.q === "q0"; }, ai: function (b) { return b.dataset.ai === "1"; }
+    };
+    var legendItems = $$(".sc-legend > span").slice(0, legendKeys.length);
+    var lgBox = $(".sc-legend");
+    if (lgBox) { var hint = document.createElement("span"); hint.className = "lg-hint";
+      hint.textContent = L("Tip: click a legend item, hover a corner label or the golden current to highlight papers.", "提示：点击图例、把鼠标移到四角的象限名或金色洋流上，可以高亮相关论文。");
+      lgBox.appendChild(hint); }
+    legendItems.forEach(function (sp, i) {
+      var key = legendKeys[i];
+      sp.setAttribute("role", "button"); sp.setAttribute("tabindex", "0"); sp.setAttribute("aria-pressed", "false");
+      sp.classList.add("lg-btn");
+      var toggle = function () {
+        var on = sp.getAttribute("aria-pressed") !== "true";
+        legendItems.forEach(function (x) { x.setAttribute("aria-pressed", "false"); });
+        sp.setAttribute("aria-pressed", String(on));
+        legendTest = on ? tests[key] : null; hl(legendTest);
+      };
+      sp.addEventListener("click", toggle);
+      sp.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } });
+    });
+    // particles drifting along the generative-AI current
+    if (curLine && !REDUCE && curLine.getTotalLength) {
+      var len = curLine.getTotalLength(), drift = el("g", { class: "sc-drift", "aria-hidden": "true" }, null);
+      bg.appendChild(drift);
+      var parts = [];
+      for (var i = 0; i < 16; i++) parts.push({ t: i / 16, v: 0.018 + (i % 4) * 0.004, off: (rand(77, i) - 0.5) * 16,
+        n: el("circle", { r: 1.6 + rand(19, i) * 1.6, class: "sc-particle" }, drift) });
+      var seen = true, last = performance.now();
+      if ("IntersectionObserver" in window) new IntersectionObserver(function (es) { seen = es[0].isIntersecting; }).observe(host);
+      (function tick(now) {
+        var dt = Math.min(0.05, (now - last) / 1000); last = now;
+        if (seen) parts.forEach(function (pt) {
+          pt.t = (pt.t + pt.v * dt * (svg.classList.contains("current-hot") ? 3 : 1)) % 1;
+          var a = curLine.getPointAtLength(pt.t * len), b2 = curLine.getPointAtLength(Math.min(len, pt.t * len + 1));
+          var nx = -(b2.y - a.y), ny = b2.x - a.x, nl = Math.hypot(nx, ny) || 1;
+          pt.n.setAttribute("cx", (a.x + nx / nl * pt.off).toFixed(1));
+          pt.n.setAttribute("cy", (a.y + ny / nl * pt.off).toFixed(1));
+          pt.n.setAttribute("opacity", (Math.sin(pt.t * Math.PI) * 0.9).toFixed(2));
+        });
+        requestAnimationFrame(tick);
+      })(last);
+    }
 
     function show(id, pin) {
       var p = S.pubs.filter(function (x) { return x.id === id; })[0];
@@ -389,6 +473,16 @@
     var OA = "https://api.openalex.org/works";
     var dois = S.pubs.filter(function (p) { return p.doi; }).map(function (p) { return p.doi.toLowerCase(); });
     var setText = function (sel, txt) { var n = $(sel); if (n) n.textContent = txt; };
+    var countUp = function (sel, to) {
+      var n = $(sel); if (!n) return;
+      if (REDUCE || !to) { n.textContent = to; return; }
+      var t0 = performance.now(), dur = 1200;
+      (function step(t) {
+        var k = Math.min(1, (t - t0) / dur); k = 1 - Math.pow(1 - k, 3);
+        n.textContent = Math.round(to * k);
+        if (k < 1) requestAnimationFrame(step);
+      })(t0);
+    };
     var getJSON = function (u) { return fetch(u).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); };
 
     var loadData = function () {
@@ -414,9 +508,9 @@
     };
 
     var drawCites = function (d) {
-      setText("#cs-sources", d.sources);
-      setText("#cs-citing", d.citing);
-      setText("#cs-countries", d.groups.length);
+      countUp("#cs-sources", d.sources);
+      countUp("#cs-citing", d.citing);
+      countUp("#cs-countries", d.groups.length);
       var listEl = $("#cite-list"), max = d.groups.length ? d.groups[0].n : 1;
       listEl.innerHTML = d.groups.slice(0, 12).map(function (g) {
         var nm = g.name;
@@ -495,6 +589,7 @@
             : '<h3>' + s.name + '</h3><p class="stamp-zh" lang="zh-CN">' + s.zh + "</p>") +
         '<p class="stamp-pos">' + dms(s.lat, "N", "S") + "&ensp;" + dms(s.lon, "E", "W") + "</p>";
       $$("[data-stop]", listEl).forEach(function (b) { b.setAttribute("aria-current", String(b.dataset.stop === s.id)); });
+      cardEl.style.animation = "none"; void cardEl.offsetWidth; cardEl.style.animation = "";
     }
     var globe = null;
     function select(id) {
@@ -559,7 +654,15 @@
               .classed("active", current && current.id === d.id);
           });
         }
-        svg.call(d3.drag().on("drag", function (ev) {
+        var lastTouch = Date.now(), flying = false, inView = true;
+        var touch = function () { lastTouch = Date.now(); };
+        if ("IntersectionObserver" in window) new IntersectionObserver(function (es) { inView = es[0].isIntersecting; }).observe(gbox);
+        ["pointerdown", "wheel"].forEach(function (ev) { gbox.addEventListener(ev, touch, { passive: true }); });
+        if (!reduce) d3.timer(function (elapsed) {
+          if (!inView || flying || Date.now() - lastTouch < 4000) return;
+          var r = proj.rotate(); proj.rotate([r[0] + 0.06, r[1]]); redraw();
+        });
+        svg.call(d3.drag().on("start", touch).on("drag", function (ev) {
           var r = proj.rotate(), f = 0.25 * base / proj.scale();
           proj.rotate([r[0] + ev.dx * f, Math.max(-80, Math.min(80, r[1] - ev.dy * f))]); redraw();
         }));
@@ -577,7 +680,8 @@
           var r0 = proj.rotate(), s0 = proj.scale(), r1 = [-lonlat[0], -lonlat[1]];
           var dl = ((r1[0] - r0[0] + 540) % 360) - 180;
           if (reduce) { proj.rotate(r1).scale(targetScale); return redraw(); }
-          d3.transition().duration(1100).ease(d3.easeCubicInOut).tween("fly", function () {
+          flying = true; touch();
+          d3.transition().duration(1100).ease(d3.easeCubicInOut).on("end interrupt", function () { flying = false; touch(); }).tween("fly", function () {
             return function (t) { proj.rotate([r0[0] + dl * t, r0[1] + (r1[1] - r0[1]) * t]).scale(s0 + (targetScale - s0) * t); redraw(); };
           });
         }
@@ -593,5 +697,39 @@
       gbox.innerHTML = '<p class="empty" style="padding:40px 20px;text-align:center">' + L("The globe could not load (it needs an internet connection). Every stop is still listed alongside.", "地球未能加载（需要联网），旁边的列表仍显示全部地点。") + "</p>";
     }
     if (document.readyState === "complete") startGlobe(); else window.addEventListener("load", startGlobe);
+  }
+
+  /* ---------- motion: living waves, click ripples, bobbing buoys ---------- */
+  if (!REDUCE) {
+    // hero waves drift slowly
+    var waves = $$(".horizon .wv");
+    if (waves.length) {
+      var heroVisible = true;
+      if ("IntersectionObserver" in window) new IntersectionObserver(function (es) { heroVisible = es[0].isIntersecting; }).observe($(".horizon"));
+      var W = 1120;
+      var draw = function (t) {
+        if (heroVisible) waves.forEach(function (w) {
+          var y = +w.dataset.y, a = +w.dataset.a, per = +w.dataset.p, ph = +w.dataset.ph, sp = +w.dataset.s;
+          var shift = ph + t / 1000 * sp, d = "M";
+          for (var x = 0; x <= W; x += 10) d += (x ? " L" : "") + x + "," + (y + a * Math.sin(x / per * 2 * Math.PI + shift)).toFixed(1);
+          w.setAttribute("d", d);
+        });
+        requestAnimationFrame(draw);
+      };
+      requestAnimationFrame(draw);
+    }
+    // water ripple where you click
+    document.addEventListener("pointerdown", function (e) {
+      if (e.pointerType === "touch" && e.isPrimary === false) return;
+      var r = document.createElement("span");
+      r.className = "ripple";
+      r.style.left = e.clientX + "px"; r.style.top = e.clientY + "px";
+      document.body.appendChild(r);
+      setTimeout(function () { r.remove(); }, 900);
+    });
+    // buoys bob at different rhythms
+    setTimeout(function () {
+      $$(".buoy").forEach(function (b, i) { b.style.animationDelay = (-(i * 0.73) % 4).toFixed(2) + "s"; b.style.animationDuration = (3.4 + (i % 5) * 0.35).toFixed(2) + "s"; });
+    }, 0);
   }
 })();

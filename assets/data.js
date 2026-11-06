@@ -1,7 +1,6 @@
 /* ------------------------------------------------------------------
    Site data — edit this file to update publications, metrics, and the map.
-   JCR metrics: Journal Impact Factor (JIF) 2025, Journal Citation Reports
-   released June 2026 (Clarivate). Quartile = best JCR category quartile.
+   JCR metrics: JCR 2026 release (Clarivate, June 2026), i.e. the 2025 Journal Impact Factor. Quartile = best JCR category quartile.
    Leave jif as null if unknown; the badge will simply be hidden.
 ------------------------------------------------------------------- */
 window.SITE = {
@@ -13,7 +12,7 @@ window.SITE = {
     linkedin: "https://hk.linkedin.com/in/lanfangsun"
   },
 
-  jcrLabel: "JCR 2025",
+  jcrLabel: "JCR 2026",
 
   journals: {
     ILLT:  { name: "Innovation in Language Learning and Teaching", index: "SSCI", q: "Q1", jif: null },
@@ -260,6 +259,7 @@ window.SITE = {
     { id: "sanfrancisco", name: "San Francisco", zh: "旧金山", region: "United States", continent: "North America", lat: 37.77, lon: -122.42 },
     { id: "tokyo", name: "Tokyo", zh: "东京", region: "Japan", continent: "Asia", lat: 35.68, lon: 139.69 },
     { id: "seoul", name: "Seoul", zh: "首尔", region: "South Korea", continent: "Asia", lat: 37.57, lon: 126.98 },
+    { id: "busan", name: "Busan", zh: "釜山", region: "South Korea", continent: "Asia", lat: 35.18, lon: 129.08 },
     { id: "jeju", name: "Jeju", zh: "济州岛", region: "South Korea", continent: "Asia", lat: 33.49, lon: 126.53 },
     { id: "bangkok", name: "Bangkok", zh: "曼谷", region: "Thailand", continent: "Asia", lat: 13.76, lon: 100.5 },
     { id: "manila", name: "Manila", zh: "马尼拉", region: "Philippines", continent: "Asia", lat: 14.6, lon: 120.98 },
