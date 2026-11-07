@@ -23,6 +23,12 @@
 - stops：旅行地点（英文名、中文名、国家/地区、group 分组 cn | tw | us | asia、经纬度）；加一行就能在地球上多一个点
 - jcrLabel：分区标签显示的年份（目前 "JCR 2025"）
 
+## 数据来源与需要你核对的地方
+- 分区与影响因子按 JCR 2026 年版（2026 年 6 月发布，即 2025 年度 JIF）填写，来自公开转载页面（wos-journal.info、BioxBio、MDPI 期刊页），建议用学校图书馆 JCR 再核对一次。
+- Innovation in Language Learning and Teaching、Computers and Composition 的 2025 JIF 没查到可靠数值，暂未显示，只显示 CV 中的 Q1。
+- Reflective Practice：2025 JIF 1.8，在 Education & Educational Research 类别中百分位约 61.8%，按 JCR 规则为 Q2（CV 中写的是 Q1，网站目前显示 Q2，请核对）。
+- DOI 10.1111/jcal.70244 由文章编号 e70244 按 Wiley 格式推断；其余 DOI 都核对过出版商或 HKU Scholars Hub。
+
 ## 以后在 GitHub 上更新
 方法一：网页上直接改（适合加一篇论文、一个报告、改几个字）
 1. 打开仓库 → 点进 assets → 点 data.js → 右上角铅笔图标（Edit this file）。
